@@ -1,0 +1,16 @@
+Django
+djangorestframework
+psycopg2-binary
+python-dotenv
+django-filter
+drf_yasg
+coverage
+django-cors-headers
+djangorestframework-simplejwt
+
+redis
+celery
+django_celery_beat
+requests
+flake8
+gunicorn
