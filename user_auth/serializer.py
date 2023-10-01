@@ -1,5 +1,4 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-# from django.db import models
 from rest_framework import serializers
 from user_auth.models import User
 
@@ -10,7 +9,8 @@ class UsersSerializers(serializers.ModelSerializer):
         model = User
         fields = (
             'email',
-            'phone'
+            'phone',
+            'is_active'
         )
 
 
@@ -21,6 +21,5 @@ class GetTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
 
         # Добавление пользовательских полей в токен
-        token['username'] = user.username
         token['email'] = user.email
         return token

@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext as _
 from config.settings import NULLABLE
 
 
@@ -47,28 +46,28 @@ class Products(models.Model):
     date_market_launch
     """
     name = models.CharField(
-        verbose_name=_('name'),
+        verbose_name='название',
         max_length=200,
     )
 
     model = models.CharField(
-        verbose_name=_('name'),
+        verbose_name='модель',
         max_length=200,
         **NULLABLE
     )
 
     date_market_launch = models.DateField(
-        verbose_name=_("date of market launch"),
+        verbose_name='дата выхода на рынок',
         **NULLABLE
     )
 
     class Meta:
-        verbose_name = _('Product')
-        verbose_name_plural = _('Products')
+        verbose_name = 'продукт'
+        verbose_name_plural = 'продукты'
 
     def __str__(self):
-        return f"Продукт{self.name}, модель:{self.model}, " +\
-            "дата выхода на рынок: {self.date_market_launch}"
+        return f"{self.name} {self.model}, " +\
+            f"дата выхода на рынок {self.date_market_launch}"
 
 
 class Retails(models.Model):
@@ -87,12 +86,12 @@ class Retails(models.Model):
     time_created
     """
     name = models.CharField(
-        _('name'),
+        'название',
         max_length=200,
     )
 
     level = models.CharField(
-        verbose_name=_('level'),
+        verbose_name='уровень',
         choices=[
             ('factory', 'Завод'),
             ('network', 'Розничная сеть'),
@@ -101,62 +100,75 @@ class Retails(models.Model):
     )
 
     email = models.EmailField(
-        verbose_name=_('email'),
+        verbose_name='email',
         max_length=200,
         **NULLABLE
     )
 
     country = models.CharField(
-        _('country'),
+        'страна',
         max_length=200,
         **NULLABLE
     )
 
     city = models.CharField(
-        _('city'),
+        'город',
         max_length=200,
         **NULLABLE
     )
 
     street = models.CharField(
-        _('street'),
+        'улица',
         max_length=200,
         **NULLABLE
     )
 
     house_number = models.IntegerField(
-        verbose_name=_('house number'),
+        verbose_name='номер дома',
         **NULLABLE
     )
 
     product = models.ForeignKey(
         Products,
         on_delete=models.SET_NULL,
-        verbose_name=_('products'),
+        verbose_name='продукт',
         **NULLABLE
     )
 
     supplier = models.ForeignKey(
         'self',
-        verbose_name=_('supplier'),
+        verbose_name='поставщик',
         on_delete=models.DO_NOTHING,
         **NULLABLE
         )
 
     obligation = models.DecimalField(
-        verbose_name=_('indebtedness to the supplier'),
+        verbose_name='задолженность перед поставщиком',
+        decimal_places=2,
+        max_digits=20,
         default=0.00
     )
 
     time_created = models.TimeField(
-        verbose_name=_('creation time'),
+        verbose_name='время создания',
         auto_now=True,
         **NULLABLE
     )
 
     class Meta:
-        verbose_name = _('network model')
-        verbose_name_plural = _('network models')
+        verbose_name = 'Сеть'
+        verbose_name_plural = 'Сети'
 
     def __str__(self):
-        return f"{self.name} {self.level}"
+        return f"{self.get_level_display()}: {self.name}"
+
+    def admin_action(self):
+        self.obligation = 0
+
+    def get_level(self):
+        count = 0
+        if self.supplier is None:
+            return 0
+        else:
+            count += self.supplier.get_level()
+            return count
