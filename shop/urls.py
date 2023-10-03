@@ -1,6 +1,6 @@
-from django.urls import path
 from rest_framework.routers import DefaultRouter
 from shop.views import ProductsViewSet, RetailsViewSet, AdminActionUpdateView
+from django.urls import path
 
 
 router = DefaultRouter()

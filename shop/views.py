@@ -2,13 +2,17 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from shop.models import Products, Retails
 from shop.serializer import ProductsSerializers, RetailsSerializers
 from shop.paginations import PaginationClass
-from shop.permissions import IsActiveRequired
+from drf_yasg.utils import swagger_auto_schema
 
 
 class ProductsViewSet(viewsets.ModelViewSet):
+    """
+    Представление для модели Products
+    """
     serializer_class = ProductsSerializers
     pagination_class = PaginationClass
     permission_classes = [IsAuthenticated]
@@ -16,6 +20,9 @@ class ProductsViewSet(viewsets.ModelViewSet):
 
 
 class RetailsViewSet(viewsets.ModelViewSet):
+    """
+    Представление для модели Retails
+    """
     serializer_class = RetailsSerializers
     pagination_class = PaginationClass
     permission_classes = [IsAuthenticated]
@@ -25,21 +32,33 @@ class RetailsViewSet(viewsets.ModelViewSet):
 
 
 class AdminActionUpdateView(generics.UpdateAPIView):
+    """
+    Представление для выполнения метода admin_action
+    для обнуления задолженности поставщику.
+    Доступно только админу.
+    """
     serializer_class = RetailsSerializers
     pagination_class = PaginationClass
     permission_classes = [IsAuthenticated, IsAdminUser]
     queryset = Retails.objects.all().order_by('name')
 
+    # @action(detail=True, methods=['patch'])
+    # @swagger_auto_schema(
+    #     method='PATCH',
+    #     operation_description='Обнуление задолженности поставщику',
+    #     request_body=RetailsSerializers,
+    #     responses={
+    #         200: RetailsSerializers,
+    #         400: 'Bad Request',
+    #         401: 'Unauthorized',
+    #         403: 'Forbidden',
+    #         404: 'Not Found'
+    #     }
+    # )
     def partial_update(self, request, *args, **kwargs):
-        # Наши дополнительные проверки, преобразования и ограничения
         instance = self.get_object()
         instance.admin_action()
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-
-        # Ваш код для проведения необходимых проверок, преобразований и ограничений
-
-        # Вызываем родительский метод partial_update для выполнения остальной работы
         self.perform_update(serializer)
-
         return Response(serializer.data)
