@@ -6,13 +6,6 @@ from shop.models import Products, Retails
 from rest_framework import status
 
 
-"""
-Тесты на фильтрацию
-
-"""
-
-
-
 TEST_USER_EMAIL = "test@email.tu"
 TEST_USER_PASSWORD = "password_user"
 TEST_USER_EMAIL_NO_ACTIVE = "testno@email.tu"
