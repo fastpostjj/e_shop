@@ -253,10 +253,11 @@ class TestRetails(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.retail14.refresh_from_db()
         self.assertEqual(self.retail14.product, self.product3)
+
         data1 = {
                 "name": "Test_retail003",
                 "level": "network",
-                "obligation": 500
+                "obligation": 4500
         }
         url = reverse("retails-detail", args=[self.retail14.id])
         response = self.client.put(url, data1)
