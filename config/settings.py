@@ -39,7 +39,8 @@ if os.path.isfile(dot_env):
     DEBUG = bool(os.getenv('DEBUG'))
 
     ALLOWED_HOSTS_ = os.getenv('ALLOWED_HOSTS_')
-    FRONTEND_URL = os.getenv('FRONTEND_URL')
+    BACKENDSERVER_URL = os.getenv('BACKENDSERVER_URL')
+    FRONTENDSERVER_URL = os.getenv('FRONTENDSERVER_URL')
 else:
     raise FileNotFoundError(f"File {dot_env} did not find in {BASE_DIR}")
 
@@ -170,12 +171,12 @@ LOGIN_URL = '/users/'
 NULLABLE = {'null': True, 'blank': True}
 
 CORS_ALLOWED_ORIGINS = [
-    FRONTEND_URL,  # адрес фронтенд-сервера
+    FRONTENDSERVER_URL,  # адрес фронтенд-сервера
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    FRONTEND_URL,  # адрес фронтенд-сервера
-    #  адрес бэкенд-сервера
+    FRONTENDSERVER_URL,  # адрес фронтенд-сервера
+    BACKENDSERVER_URL,  # адрес бэкенд-сервера
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False
@@ -190,7 +191,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
-    # Закрыть все эндпоинты авторизацией
+    # Закрываем все эндпоинты авторизацией
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
@@ -198,8 +199,8 @@ REST_FRAMEWORK = {
 
 # Настройки срока действия токенов
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15000),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=120),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=120),
 }
 
 SWAGGER_SETTINGS = {

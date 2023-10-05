@@ -14,6 +14,17 @@ class ProductsSerializers(serializers.ModelSerializer):
 
 
 class RetailsSerializers(serializers.ModelSerializer):
+
+    def update(self, instance, validated_data):
+        # Исключаем поле 'obligation' из обновления
+        validated_data.pop('obligation', None)
+        return super().update(instance, validated_data)
+
+    # def partial_update(self, instance, validated_data):
+    #     # Исключаем поле 'obligation' из обновления
+    #     validated_data.pop('obligation', None)
+    #     return super().partial_update(instance, validated_data)
+
     class Meta:
         model = Retails
         fields = (
@@ -29,4 +40,4 @@ class RetailsSerializers(serializers.ModelSerializer):
             'obligation',
             'time_created'
         )
-    validators = [RetailsValidator]
+    validators = [RetailsValidator()]

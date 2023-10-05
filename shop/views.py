@@ -2,7 +2,6 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics
 from rest_framework.response import Response
-from rest_framework.decorators import action
 from shop.models import Products, Retails
 from shop.serializer import ProductsSerializers, RetailsSerializers
 from shop.paginations import PaginationClass
@@ -27,7 +26,7 @@ class RetailsViewSet(viewsets.ModelViewSet):
     pagination_class = PaginationClass
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['country']
+    filterset_fields = ['country', 'city']
     queryset = Retails.objects.all().order_by('name')
 
 
@@ -42,19 +41,16 @@ class AdminActionUpdateView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
     queryset = Retails.objects.all().order_by('name')
 
-    # @action(detail=True, methods=['patch'])
-    # @swagger_auto_schema(
-    #     method='PATCH',
-    #     operation_description='Обнуление задолженности поставщику',
-    #     request_body=RetailsSerializers,
-    #     responses={
-    #         200: RetailsSerializers,
-    #         400: 'Bad Request',
-    #         401: 'Unauthorized',
-    #         403: 'Forbidden',
-    #         404: 'Not Found'
-    #     }
-    # )
+    @swagger_auto_schema(
+            operation_description="PATCH /admin_action/{id}/",
+            responses={
+                200: RetailsSerializers,
+                400: 'Bad Request',
+                401: 'Unauthorized',
+                403: 'Forbidden',
+                404: 'Not Found'
+            }
+            )
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.admin_action()

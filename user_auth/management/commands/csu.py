@@ -1,5 +1,4 @@
 from django.core.management import BaseCommand
-
 from user_auth.models import User
 
 
@@ -39,13 +38,10 @@ class Command(BaseCommand):
 
     def change_password(self, *args, **options):
         user = User.objects.get(email='example@example.com')
-        # user = User.objects.get(email='user1@mail.ru')
-        print(user.check_password('123abc123'))
         user.set_password('123abc123')
-
         user.save()
 
     def handle(self, *args, **options):
-        # self.create_superuser(*args, **options)
+        self.create_superuser(*args, **options)
         self.create_user(*args, **options)
         # self.change_password(*args, **options)
